@@ -3,10 +3,11 @@
 
 const h_mysql = require('@helpers/mysql.helper');
 
+const {asyncMiddleware} = require('middleware-async')
 
-module.exports = function auth(req_type,per_slug) {
+module.exports =  function auth(req_type,per_slug) {
     
-    return  function auth(req, res, next){
+    return  asyncMiddleware( async function  auth(req, res, next){
 
     //req_type  web | api
     //per_slug  entity:method
@@ -21,7 +22,9 @@ module.exports = function auth(req_type,per_slug) {
     auth.device_ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null;
 
 
-     auth.users = h_mysql.execute('select * from user_sessions where token_id = ' + auth.token_id +'  and device_id = ' + auth.device_id ,[],'con_mysql2');
+     auth.users = await h_mysql.execute('select * from user_sessions where token_id = ' + auth.token_id +'  and device_id = ' + auth.device_id ,[],'con_mysql2');
+     //auth.users = await h_mysql.execute('select * from user_sessions where token_id = ?  and device_id = ?' ,[auth.token_id,auth.device_id ],'con_mysql2');
+     //auth.users = await h_mysql.execute('select * from user_sessions where token_id = :tokenid  and device_id = :deviceid' ,{tokenid:auth.token_id ,deviceid:auth.device_id });
 
 
     req.auth = auth;
@@ -29,7 +32,7 @@ module.exports = function auth(req_type,per_slug) {
 
 
 
-    }
+    })
 }
 
 

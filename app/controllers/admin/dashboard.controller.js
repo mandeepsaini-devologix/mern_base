@@ -8,27 +8,20 @@ const {asyncMiddleware} = require('middleware-async');
 const config = require('config');
 const { error } = require('winston');
 
-//const authMiddleware = require('../../middlewares/auth.middleware');
+const authMiddleware = require('../../middlewares/auth.middleware');
 const auth = require('@helpers/auth.helper');
 
 //config.has('db_mysql.name') // Return true/false
 //config.get('db_mysql.name') //Returns value
 
 
-router.get('/', async  (req, res) =>{
+router.get('/', authMiddleware('web',''),   (req, res) =>{
 
-    req = await auth.check(req,'web','');
+    //req = await auth.check(req,'web','');
 
   
   console.log(req.auth);
   res.send('dashboard ' + req.auth.authentication);
-  
-  
-  
-  
-  
-  
-  
   
   
   
