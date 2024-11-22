@@ -1,7 +1,16 @@
 {
-    "db_mysql": {
-      "name": "customers",
+    "con_mysql": {
+      "database": "mern_base",
+      "user":"root",
+      "password": "1234",
       "host": "localhost",
-      "port": 5984
+      "port": 3306
+    },
+    "con_mysql2": {
+      "database": "mern_base",
+      "user":"root",
+      "password": "1234",
+      "host": "localhost",
+      "port": 3306
     }
 }

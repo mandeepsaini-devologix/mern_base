@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "config": "^3.3.11",
-    "cookie-parser": "^1.4.6",
+    "cookie-parser": "^1.4.7",
     "debug": "^4.3.5",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
@@ -19,7 +19,9 @@
     "express-ejs-layouts": "^2.5.1",
     "joi": "^17.13.1",
     "lodash": "^4.17.21",
+    "middleware-async": "^1.4.0",
     "module-alias": "^2.2.3",
+    "mysql2": "^3.11.4",
     "winston": "^3.13.0"
   },
   "_moduleAliases": {
@@ -27,6 +29,7 @@
     "@startup": "./app/startup",
     "@routes": "./app/routes",
     "@controllers": "./app/controllers",
-    "@middlewares": "./app/middlewares"
+    "@middlewares": "./app/middlewares",
+    "@helpers": "./app/helpers"
   }
 }

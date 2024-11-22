@@ -1,6 +1,7 @@
 
 require('dotenv').config();
 require('module-alias/register');//Needed for @ in path
+var cookieParser = require('cookie-parser')
 
 //Init Startup Debuger
 const debugStartUp = require('debug')('app:startup');
@@ -8,14 +9,11 @@ const debugStartUp = require('debug')('app:startup');
 //Init Express App
 const express = require('express');
 const app = express();
-
+app.use(cookieParser());
 
 
 //Init Startup Error Logger
 require('@startup/errorLog.start')(process);
-
-//Init all Databases Here
-
 
 //Starting View Engine
 require('@startup/viewEngine.start')(app);
