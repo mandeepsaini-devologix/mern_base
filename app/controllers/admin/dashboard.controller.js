@@ -21,7 +21,7 @@ router.get('/', authMiddleware('web',''),   (req, res) =>{
 
   
   console.log(req.auth);
-  res.send('dashboard ' + req.auth.authentication);
+  res.send('Dashboard ' + JSON.stringify(req.auth.status)  );
   
   
   
