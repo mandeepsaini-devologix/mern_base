@@ -1,7 +1,7 @@
 const express = require('express');
 var expressLayouts = require('express-ejs-layouts');
 const cookieParser = require('cookie-parser');
-
+var path = require('path');
 module.exports = function(app){
 
   //Set view engine as ejs
@@ -14,5 +14,7 @@ module.exports = function(app){
   app.use(cookieParser());
   app.use(express.json());
 
+  //resolve public
+  app.use(express.static(path.resolve('./public')));
 
 }

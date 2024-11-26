@@ -1,4 +1,6 @@
 {
+  
+
     "con_mysql": {
       "database": "mern_base",
       "user":"root",
@@ -13,5 +15,6 @@
       "password": "1234",
       "host": "localhost",
       "port": 3306
-    }
+    },
+    "loginpage":"/auth/login"
 }

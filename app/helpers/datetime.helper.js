@@ -3,17 +3,12 @@
 
 // datetime---------------------------------------------------------------------------------------------------
 
-const { date } = require("joi");
 
 function get( dt_str ='')
 {
    
     let date = dt_str ? new Date(dt_str) : new Date();
-
-    // Correcting Offset problem
-    date =  add(date,'minutes '+(date.getTimezoneOffset() * -1));
-
-
+    date =  add(date,'minutes '+(date.getTimezoneOffset() * -1));// Correcting Offset problem
     return date;
 }
 
@@ -37,9 +32,23 @@ function add(datetime,typeinterval)
     type = typeinterval.split(' ')[0];
     interval = typeinterval.split(' ')[1];
 
+    if( type == 'days')
+    {
+        datetime_ret = new Date(datetime.getTime() + (interval * 24 * 60 * 60 * 1000));
+    }
+    if( type == 'hours')
+    {
+        datetime_ret = new Date(datetime.getTime() + (interval * 60 * 60 * 1000));
+    }
+    
     if( type == 'minutes')
     {
         datetime_ret = new Date(datetime.getTime() + (interval * 60 * 1000));
+    }
+
+    if( type == 'seconds')
+    {
+        datetime_ret = new Date(datetime.getTime() + (interval * 1000));
     }
 
     return datetime_ret;
