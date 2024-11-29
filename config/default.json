@@ -1,5 +1,11 @@
 {
   
+  "project":"Mern Base",
+  "version":"1.0.0",
+  
+  "pro_logo":"MernBase",
+  "pro_icon":"MernBase",
+  "pro_title":"MernBase",
 
     "con_mysql": {
       "database": "mern_base",
@@ -16,5 +22,5 @@
       "host": "localhost",
       "port": 3306
     },
-    "loginpage":"/auth/login"
+    "loginpage":"/admin/auth/login"
 }

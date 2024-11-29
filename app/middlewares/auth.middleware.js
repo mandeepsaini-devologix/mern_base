@@ -43,7 +43,7 @@ module.exports =  function auth(req_type = 'web', per_slug= '') {
 
     //Get user from DB
      //auth.users = await h_mysql.execute('select * from user_sessions where token_id = ?  and device_id = ?' ,[auth.token_id,auth.device_id ]);
-    let users = await h_mysql.execute('select u.name,u.email,u.mobile,u.is_active,us.id as session_id,ut.per_csl, us.* from user_sessions us left join users u on u.id = us.user_id left join user_types ut on ut.id = u.usertype_id where us.token_id = :tokenid  and us.device_id = :deviceid' ,{tokenid:auth.token_id ,deviceid:auth.device_id });
+    let users = await h_mysql.execute('select u.name,u.email,u.mobile,u.img,u.is_active,ut.is_admin,us.id as session_id,ut.per_csl, us.* from user_sessions us left join users u on u.id = us.user_id left join user_types ut on ut.id = u.usertype_id where us.token_id = :tokenid  and us.device_id = :deviceid' ,{tokenid:auth.token_id ,deviceid:auth.device_id });
 
     if(users.length === 0)
     {// Token and Device Missmatch

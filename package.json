@@ -30,6 +30,7 @@
     "@routes": "./app/routes",
     "@controllers": "./app/controllers",
     "@middlewares": "./app/middlewares",
-    "@helpers": "./app/helpers"
+    "@helpers": "./app/helpers",
+    "@models": "./app/models"
   }
 }
