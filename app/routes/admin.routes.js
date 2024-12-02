@@ -17,7 +17,10 @@ module.exports = function(app){
   app.use('/admin/', dashboardController);
   app.use('/admin/auth/', authController);
   app.use('/admin/products/', productsController);
-  
+
+
+
+
 
   //Routes Ends Here ---------------------------------------------
 

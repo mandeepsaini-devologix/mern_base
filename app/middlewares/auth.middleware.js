@@ -156,7 +156,8 @@ function after_auth(req, res, next,auth)
         {
             //Return Error Response in API
             //401 is HTTP code 200,401,404,500
-            res.send({ meta : {status : 401, message : 'Unauthorized'}, data : {} });
+        
+            res.status(401).send({  message : 'Unauthorized', data : {} });
         }
         else
         {
