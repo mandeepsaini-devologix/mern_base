@@ -13,6 +13,12 @@
   <link rel="stylesheet" href="/admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="/admin/dist/css/adminlte.min.css?v=3.2.0">
+
+  <style>
+    input.invalid{border-color: red;}
+    .input-invalid,.form-invalid{ font-size: 12px; color:rgb(248, 146, 146);}
+  </style>
+
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
@@ -25,29 +31,36 @@
       <p class="login-box-msg">Sign in to start your session</p>
 
       <form id="fm_login">
-       
-        <div class="input-group mb-3">
-          <input id="tb_user" type="email" class="form-control" placeholder="Email" required>
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-envelope"></span>
+        <div class="input-group-con mb-3">
+          <div class="input-group ">
+            <input id="tb_user" type="email" data-key="user"data-type="input-text" data-group="g1" class="form-control" placeholder="Email" required>
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-envelope"></span>
+              </div>
             </div>
           </div>
+
+          <div class="input-invalid ml-2"></div>
         </div>
-       
-        <div class="input-group mb-3">
-          <input id="tb_pass" type="password" class="form-control invalid" placeholder="Password"  required>
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-lock"></span>
+       <div class="input-group-con mb-3">
+
+         <div class="input-group">
+           <input id="tb_pass" type="password" data-key="pass" data-type="input-text" data-group="g1" class="form-control" placeholder="Password"  required>
+           <div class="input-group-append">
+             <div class="input-group-text">
+               <span class="fas fa-lock"></span>
+              </div>
             </div>
           </div>
+          <div class="input-invalid ml-2"></div>
         </div>
        
         <div class="row">
+          <div class="col-12 form-invalid ml-2 mb-2 text-center"></div>
           <div class="col-8">
             <div class="icheck-primary">
-              <input  id="cb_remme" type="checkbox" >
+              <input  id="cb_remme" data-key="remme" data-type="checkbox" data-group="g1" type="checkbox" >
               <label for="cb_remme">
                 Remember Me
               </label>
@@ -96,27 +109,42 @@
   $('#bt_login').on('click',function()
   {
 
-    $('#bt_login').addClass('d-none');
-    $('#bt_login_disabled').removeClass('d-none');
-    
-    bodyObj = {};
-    bodyObj.user = $('#tb_user').val();
-    bodyObj.pass= $('#tb_pass').val();
-    bodyObj.remme= $('#cb_remme').prop('checked');
+    toggleButton('#bt_login',false);
+
+    bodyObj = getFormFields('g1');
     
     $.ajax({
         url: "/admin/auth/api/login",
+        type:"POST",
+        contentType: 'application/json',
+        processData: false,
+        data: JSON.stringify(  bodyObj), 
         success: function (result) 
         {
-            alert('success:' + JSON.stringify(result));
-            $('#bt_login_disabled').addClass('d-none');
-            $('#bt_login').removeClass('d-none');
-          },
-          error: function (xhr, status, error) 
+          cleanValidation();
+          if(result.success)
           {
-            alert('Error:' + JSON.stringify(error));
-            $('#bt_login_disabled').addClass('d-none');
-            $('#bt_login').removeClass('d-none');
+            
+          }
+          else
+          {
+            if(result.status == 'validation_error')
+            {
+              showValidation(result);
+            }
+            else
+            {
+              $('.form-invalid').html('Ooops! Something Went Wrong!');
+            }
+
+
+          }
+          toggleButton('#bt_login',true);
+        },
+        error: function (xhr, status, error) 
+        {
+          $('.form-invalid').html('Ooops! Something Went Wrong with Server!');
+          toggleButton('#bt_login',true);
         }
       });
 
@@ -125,6 +153,58 @@
   });
 
 
+
+  function toggleButton(id,show = false)
+  {
+    if(show)
+    {
+      $(id+'_disabled').addClass('d-none');
+      $(id).removeClass('d-none');
+    }
+    else
+    {
+      $(id).addClass('d-none');
+      $(id+'_disabled').removeClass('d-none');
+    }
+  }
+
+  function getFormFields(group)
+  {
+
+    fields = {}; 
+    $('*[data-group="'+group+'"]').each( function(field){
+
+    if($(this).attr('data-type') == 'input-text' )
+    {
+      fields[$(this).attr('data-key')] = $(this).val();
+    }
+    else if($(this).attr('data-type') == 'checkbox' )
+    {
+      fields[$(this).attr('data-key')] =  $(this).prop('checked');
+    }
+
+    });
+
+
+    return fields;
+  }
+
+  function showValidation(result)
+  {
+     
+        result.error.details.forEach(element => {
+          $('*[data-key="'+ element.path[0]  +'"]').addClass('invalid');
+          $('*[data-key="'+ element.path[0]  +'"]').closest('.input-group-con').children('.input-invalid').html(element.message);
+
+        });
+  }
+
+  function cleanValidation()
+  {
+    $('.form-invalid').html('');
+    $('.invalid').removeClass('invalid');
+    $('.input-invalid').html('');
+  }
 
 
 
