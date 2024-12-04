@@ -19,7 +19,8 @@ module.exports =  function auth(req_type = 'web', per_slug= '') {
     auth.req_type = req_type; //req_type  'web' | 'api'
     auth.per_slug = per_slug; //per_slug  'entity:method' | ''
 
-    auth.is_authenticated = false;
+    auth.is_authenticated = true;
+
     auth.is_authorized = false;
     auth.status = 'checking';
     auth.user = {};
@@ -48,10 +49,9 @@ module.exports =  function auth(req_type = 'web', per_slug= '') {
     if(users.length === 0)
     {// Token and Device Missmatch
         auth.status = 'token_missmatch'; 
+        auth.is_authenticated = false;
         after_auth(req, res, next,auth);
     }
-
-  
 
     auth.user = users[0];
     auth.status = 'token_match';
@@ -61,14 +61,14 @@ module.exports =  function auth(req_type = 'web', per_slug= '') {
     if(! auth.user.token_validity)
     {
         auth.status = 'token_validity_undefined'; 
-       
+        auth.is_authenticated = false;
         after_auth(req, res, next,auth);
     }
 
     if( h_datetime.get(auth.user.token_validity) < new Date() )
     {
         auth.status = 'token_expired'; 
-       
+        auth.is_authenticated = false;
         after_auth(req, res, next, auth);
     }
 
@@ -79,29 +79,33 @@ module.exports =  function auth(req_type = 'web', per_slug= '') {
     if( ! auth.user.is_active )
     {
         auth.status = 'user_inactive'; 
-       
-
+        auth.is_authenticated = false;
         after_auth(req, res, next,auth);
     }
     
     auth.status = 'user_active ' ; 
     
-    //Slide Token
-    auth.status = await h_mysql.execute('update user_sessions set token_validity = ? where id =?',[h_datetime.getUTC('minutes +30') , auth.user.session_id]);
+    if(auth.is_authenticated)
+    {
+        //Slide Token
+        auth.status = await h_mysql.execute('update user_sessions set token_validity = ? where id =?',[h_datetime.getUTC('minutes +30') , auth.user.session_id]);
+    }
    
 
         
     //Log User Session With IP
-    auth.is_authenticated = true;
+ 
     auth.status = 'autheticated';
-
-
+    
+    //Redirect to Dashboard or Ref Url if logged in
+    
     // Check Authorization
     
+    auth.status = 'Unauthorized';
     auth.user.per_csl +=',';
 
     if(!per_slug)
-    {ri
+    {
         auth.status = 'authozed_default';
         auth.is_authorized = true;
     }
@@ -141,27 +145,58 @@ function after_auth(req, res, next,auth)
     if(req.auth.is_authenticated && req.auth.is_authorized)
     {
         // Authenticated and Authorized
-        next();
-    }
-    else
-    {
-        // Not Authenticated or Not Authorized
-        if(req.auth.req_type =='web')
+        if(req.auth.req_type =='auth')
         {
-            //Redirect to Login Page
-            //res.redirect(config.get('loginpage')+'?reason='+ auth.status+'&from=' + req.originalUrl.replace(/\?.*$/, ''));
-            res.redirect(`${config.get('loginpage')}?from=${req.originalUrl.replace(/\?.*$/, '')}&response=${ req.auth.status}`);
-        }
-        else if(req.auth.req_type =='api')
-        {
-            //Return Error Response in API
-            //401 is HTTP code 200,401,404,500
-        
-            res.status(401).send({  message : 'Unauthorized', data : {} });
+            //Goto Dashboard
+             res.redirect(`${config.get('homepage')}`);
         }
         else
         {
             next();
+        }
+    }
+    else
+    {
+        if(!req.auth.is_authenticated)
+        {
+            // Not Authenticated
+            if(req.auth.req_type =='web')
+            {
+                //Redirect to Login Page
+                //res.redirect(config.get('loginpage')+'?reason='+ auth.status+'&from=' + req.originalUrl.replace(/\?.*$/, ''));
+                res.redirect(`${config.get('loginpage')}?from=${req.originalUrl.replace(/\?.*$/, '')}&response=${ req.auth.status}`);
+                //res.send('sdfasdfas');
+            }
+            else if(req.auth.req_type =='api')
+            {
+                //Return Error Response in API
+                //401 is HTTP code 200,401,404,500
+                res.status(401).send({  message : 'Unauthorized', data : {} });
+            }
+            else
+            {
+                next();
+            }
+        }
+        else
+        {
+            // Not Authorized
+            if(req.auth.req_type =='web')
+                {
+                    //Redirect to Login Page
+                    //res.redirect(config.get('loginpage')+'?reason='+ auth.status+'&from=' + req.originalUrl.replace(/\?.*$/, ''));
+                    res.redirect(`${config.get('errorpage')}?from=${req.originalUrl.replace(/\?.*$/, '')}&response=${req.auth.status}`);
+                }
+                else if(req.auth.req_type =='api')
+                {
+                    //Return Error Response in API
+                    //401 is HTTP code 200,401,404,500
+                    res.status(401).send({  message : 'Unauthorized', data : {} });
+                }
+                else
+                {
+                    next();
+                }
         }
 
     }

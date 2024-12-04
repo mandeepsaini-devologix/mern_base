@@ -22,5 +22,11 @@
       "host": "localhost",
       "port": 3306
     },
-    "loginpage":"/admin/auth/login"
+
+    "loginpage":"/admin/auth/login",
+    "homepage":"/admin/",
+    "errorpage":"/admin/error",
+
+    "allowedloginattempts": 5,
+    "locking_period": "hours +2"
 }

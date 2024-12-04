@@ -58,6 +58,7 @@
        
         <div class="row">
           <div class="col-12 form-invalid ml-2 mb-2 text-center"></div>
+
           <div class="col-8">
             <div class="icheck-primary">
               <input  id="cb_remme" data-key="remme" data-type="checkbox" data-group="g1" type="checkbox" >
@@ -113,18 +114,14 @@
 
     bodyObj = getFormFields('g1');
     
-    $.ajax({
-        url: "/admin/auth/api/login",
-        type:"POST",
-        contentType: 'application/json',
-        processData: false,
-        data: JSON.stringify(  bodyObj), 
-        success: function (result) 
+  
+      ajax_post("/admin/auth/api/login",'',bodyObj,
+      function (result) 
         {
           cleanValidation();
           if(result.success)
           {
-            
+            $('.form-invalid').html( JSON.stringify(result) );
           }
           else
           {
@@ -132,27 +129,43 @@
             {
               showValidation(result);
             }
+            else if(result.status == 'error')
+            {
+              $('.form-invalid').html(result.message);
+            }
             else
             {
-              $('.form-invalid').html('Ooops! Something Went Wrong!');
+              $('.form-invalid').html('Ooops! Something Went Wrong! '+  JSON.stringify( result));
             }
 
 
           }
           toggleButton('#bt_login',true);
         },
-        error: function (xhr, status, error) 
+        function (xhr, status, error) 
         {
           $('.form-invalid').html('Ooops! Something Went Wrong with Server!');
           toggleButton('#bt_login',true);
-        }
-      });
+        });
 
      
     
   });
 
 
+
+  function ajax_post(url,header,body,success,error)
+  {
+    $.ajax({
+        url: url,
+        type:"POST",
+        processData: false,
+        contentType: 'application/json',
+        data: JSON.stringify(body), 
+        success: success,
+        error: error
+      });
+  }
 
   function toggleButton(id,show = false)
   {
