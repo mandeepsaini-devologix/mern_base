@@ -39,7 +39,7 @@ module.exports =  function auth(req_type = 'web', per_slug= '') {
     //Create deviceid cookie if not available
     if (req.cookies.deviceid === undefined) 
     {
-        res.cookie('deviceid',h_string.random(), { maxAge: 100 * 365 * 24 * 60 * 60 * 1000, httpOnly: true });    
+        res.cookie('deviceid',h_string.random(), { maxAge: 100 * 365 * 24 * 60 * 60 * 1000, httpOnly: false });    
     } 
 
     //Get user from DB

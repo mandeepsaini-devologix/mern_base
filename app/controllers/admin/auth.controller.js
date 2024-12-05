@@ -31,19 +31,21 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
     
   })
   
-  router.get('/logout',mw_auth('web','test:test1'), (req, res) =>
+  router.get('/logout',mw_auth('web',''), async (req, res) =>
     {
-      let ret_obj = {};
-      
-      
-      res.render('admin/auth/login',{ layout:'blank_layout',data:ret_obj });
-      
+    token_validity = h_datetime.add(new Date(),'days -365'); //For DB
+    let tokenlogout = await  h_mysql.execute("update user_sessions set  token_validity = ? where id = ? ",[ token_validity, req.auth.user.session_id  ]);
+    
+    //res.send(tokenlogout);
+    
+   res.redirect( config.get('loginpage'));
     })
 
 
   //APIs  -------------------------------------------------------------------------------------------
   router.post('/api/login',async (req, res) =>
     {
+      //Declare Return Obj
        let ret_obj = {};
        ret_obj.success = false;
        ret_obj.status = '';
@@ -65,8 +67,9 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
             res.status(200).send( ret_obj);
             
           }
-          //Logic
-          //Get User
+         
+
+          //Verify User Exist 
           let users = await h_mysql.execute('select * from users where email = ? or mobile = ?',[req.body.user,req.body.user]);
           if(users.length == 0)
             {
@@ -75,6 +78,7 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
               res.status(200).send( ret_obj);
             }
 
+            //Check for disabled user
             let user = users[0];
             if(!user.is_active)
               {
@@ -83,8 +87,8 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
                 res.status(200).send( ret_obj);
               }
 
+              //Check for Locked user
               user.locked_untill = user.locked_untill ? user.locked_untill : h_datetime.add(new Date(),'minutes -1'); 
-
               if( h_datetime.get(user.locked_untill) > h_datetime.get(new Date()) )
                 {
                   ret_obj.status = 'error';
@@ -92,31 +96,41 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
                   res.status(200).send( ret_obj);
                 }
 
+              //Check for user password
               temp_saltedhash = sha1(user.salt + req.body.pass);
-              
               if(temp_saltedhash != user.pass_hash)
               {
-                  
                   ret_obj.status = 'error';
                   ret_obj.message = await log_failed_attempts(user);
-                 
                   res.status(200).send( ret_obj );
               }
 
 
-              //Genrate Token
-              token = h_string.random();
-              token_validity = h_datetime.add(new Date(),config.get('locking_period'))
+            //Genrate Token
+            token = h_string.random();
+            token_validity = h_datetime.add(new Date(),config.get('locking_period')); //For DB
+
+            //Update Session
+            let ret_tokenupdate = await h_mysql.execute("update user_sessions set token_id = ?, token_validity = ? where user_id =? and device_id = ? ",[ token, token_validity, user.id, req.header('deviceid')  ]);
+            if(ret_tokenupdate.affectedRows == 0)
+            {
+           
+              //Insert Session
+              insert_obj= {};
+              insert_obj.user_id = user.id;
+              insert_obj.created_at = h_datetime.getUTC();
+              insert_obj.token_id = token;
+              insert_obj.token_validity = token_validity;
+              insert_obj.device_id = req.header('deviceid') ;
+              insert_obj.device_ua = req.get('User-Agent');
+              insert_obj.device_ip =req.headers['x-forwarded-for'] || req.socket.remoteAddress || null;
+
+
+              let ret_tokeninsert = await h_mysql.insert('user_sessions', insert_obj);
+            }
               
-              
-              
-              
-              
-              
-              
-              
-              ret_obj.status = 'user_found';
-              ret_obj.hash = temp_saltedhash;
+            ret_obj.status = 'loggedin';
+            ret_obj.token =  token ;
           
           ret_obj.success = true;
           res.status(200).send( ret_obj );

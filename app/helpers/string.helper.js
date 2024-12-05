@@ -12,7 +12,7 @@ function random(type='hash',length=32) {
     characters   = type == 'alphabets' ? 'abcdefghijklmnopqrstuvwxyz' : characters;
     characters   = type == 'numbers' ? '1234567890' : characters;
 
-    let result = ' ';
+    let result = '';
     const charactersLength = characters.length;
     for(let i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));

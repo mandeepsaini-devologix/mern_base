@@ -33,7 +33,7 @@
       <form id="fm_login">
         <div class="input-group-con mb-3">
           <div class="input-group ">
-            <input id="tb_user" type="email" data-key="user"data-type="input-text" data-group="g1" class="form-control" placeholder="Email" required>
+            <input id="tb_user" type="email" data-key="user"data-type="input-text" data-group="g1" value="9876543210" class="form-control" placeholder="Email" required>
             <div class="input-group-append">
               <div class="input-group-text">
                 <span class="fas fa-envelope"></span>
@@ -46,7 +46,7 @@
        <div class="input-group-con mb-3">
 
          <div class="input-group">
-           <input id="tb_pass" type="password" data-key="pass" data-type="input-text" data-group="g1" class="form-control" placeholder="Password"  required>
+           <input id="tb_pass" type="password" data-key="pass" data-type="input-text" data-group="g1" value="123456" class="form-control" placeholder="Password"  required>
            <div class="input-group-append">
              <div class="input-group-text">
                <span class="fas fa-lock"></span>
@@ -101,6 +101,8 @@
 
 <!-- jQuery -->
 <script src="/admin/plugins/jquery/jquery.min.js"></script>
+<!-- jQuery Cookies -->
+<script src="/admin/plugins/jquery.cookie.js"></script>
 <!-- Bootstrap 4 -->
 <script src="/admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
@@ -115,13 +117,23 @@
     bodyObj = getFormFields('g1');
     
   
-      ajax_post("/admin/auth/api/login",'',bodyObj,
+      ajax_post("/admin/auth/api/login",basic_header(),bodyObj,
       function (result) 
         {
           cleanValidation();
           if(result.success)
           {
-            $('.form-invalid').html( JSON.stringify(result) );
+            if(result.status =="loggedin")
+            {
+              var expDate = new Date();
+              expDate.setTime(expDate.getTime() + (24 * 60 * 60 * 1000)); // add 2 hours
+              $.cookie('tokenid',result.token, { path: '/', expires: expDate });
+              location.reload();
+            }
+            else
+            {
+              $('.form-invalid').html( JSON.stringify(result) );
+            }
           }
           else
           {
@@ -153,15 +165,24 @@
   });
 
 
+  function basic_header(obj ={})
+  {
+
+   //Make sure that cookie is not expired or not HTTPOnly
+    obj.deviceid =  $.cookie('deviceid') || '' ;
+    obj.tokenid =  $.cookie('tokenid') || '';
+    return obj;
+  }
 
   function ajax_post(url,header,body,success,error)
   {
     $.ajax({
         url: url,
         type:"POST",
-        processData: false,
-        contentType: 'application/json',
+        headers: header,
         data: JSON.stringify(body), 
+        contentType: 'application/json',
+        processData: false,
         success: success,
         error: error
       });
