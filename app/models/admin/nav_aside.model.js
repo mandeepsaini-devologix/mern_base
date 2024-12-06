@@ -4,9 +4,9 @@ const h_nav = require('@helpers/navigation.helper');
 function obj()
 {
    let obj =  [
-        { "type":"section", "icon":"", "text":"Examples", "badge":"", "data":"" },
+        { "type":"section", "icon":"", "text":"Catalog", "badge":"", "data":"" },
         
-        { "type":"item", "icon":"nav-icon fas fa-th", "text":"Widgets2", "badge":"<label clss='danger'>New</label>", "data":"/admin/?working" },
+        { "type":"item", "icon":"nav-icon fas fa-th", "text":"Products", "badge":"", "data":"/admin/products" },
         { "type":"item", "icon":"nav-icon fas fa-th", "text":"Widgets3", "badge":"<label clss='danger'>New</label>", "data":"/admin/?working" },
         
         { "type":"dropdown", "icon":"nav-icon fas fa-th", "text":"Widgets4", "badge":"<label clss='danger'>New</label>", "data": [

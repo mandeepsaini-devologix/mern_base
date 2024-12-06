@@ -16,6 +16,7 @@ const mw_auth = require('../../middlewares/auth.middleware');
 const h_mysql = require('@helpers/mysql.helper');
 const h_datetime = require('@helpers/datetime.helper');
 const h_string = require('@helpers/string.helper');
+const h_log = require('@helpers/log.helper');
 
 //Models
 
@@ -38,7 +39,7 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
     
     //res.send(tokenlogout);
     
-   res.redirect( config.get('loginpage'));
+    res.redirect( config.get('loginpage'));
     })
 
 
@@ -98,11 +99,16 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
 
               //Check for user password
               temp_saltedhash = sha1(user.salt + req.body.pass);
-              if(temp_saltedhash != user.pass_hash)
+              if(temp_saltedhash.trim() != user.pass_hash.trim())
               {
                   ret_obj.status = 'error';
                   ret_obj.message = await log_failed_attempts(user);
                   res.status(200).send( ret_obj );
+              }
+              else
+              {
+                //Resetting pass attempts to zero
+                let users = await h_mysql.execute('update users set pass_attempts = 0 where id =?',[user.id]);
               }
 
 
@@ -125,13 +131,13 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
               insert_obj.device_ua = req.get('User-Agent');
               insert_obj.device_ip =req.headers['x-forwarded-for'] || req.socket.remoteAddress || null;
 
-
               let ret_tokeninsert = await h_mysql.insert('user_sessions', insert_obj);
             }
               
-            ret_obj.status = 'loggedin';
-            ret_obj.token =  token ;
-          
+          ret_obj.status = 'loggedin';
+          ret_obj.token =  token ;
+
+          h_log.log(user,'loggedin',{});
           ret_obj.success = true;
           res.status(200).send( ret_obj );
       
@@ -160,6 +166,7 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
 
     }
     
+   
 
 
 
