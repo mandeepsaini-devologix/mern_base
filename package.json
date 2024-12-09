@@ -9,6 +9,7 @@
   "author": "Mandeep Saini",
   "license": "ISC",
   "dependencies": {
+    "bootstrap-icons": "^1.11.3",
     "config": "^3.3.11",
     "cookie-parser": "^1.4.7",
     "debug": "^4.3.5",

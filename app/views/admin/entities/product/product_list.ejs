@@ -1,0 +1,89 @@
+<!-- Content for body -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<%- contentFor('content_header') %>
+<div class="row mb-2">
+    <div class="col-sm-6">
+      
+      <h1 class="m-0" style="display: inline-block;"><%= data.header %></h1> &nbsp;&nbsp;&nbsp;
+        <div class="" style="display: inline-block;">
+
+        <ol class="breadcrumb">
+          <% data.breadcrumbs.forEach((crumb) => { %>
+            <% if(crumb.link == '#') { %>
+            <li class="breadcrumb-item active"><%= crumb.text %></li>
+            <% } else { %>
+              <li class="breadcrumb-item"><a href="<%= crumb.link %>"> <%= crumb.text %></a></li>
+            <% }%>
+
+          <% }); %>
+
+        </ol>
+      </div>
+    </div><!-- /.col -->
+    <div class="col-sm-6 text-right">
+        <div class="btn btn-primary mr-2">Add</div>
+    </div><!-- /.col -->
+  </div><!-- /.row -->
+
+
+  <%- contentFor('content') %>
+  
+  
+  <!-- Filters -->
+  <div class="row"> 
+    <div class="col-lg-3">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">@</span>
+            </div>
+            <input type="text" class="form-control" placeholder="Search ..">
+        </div>
+    </div> 
+    <div class="col-lg-2">
+        <div class="btn btn-primary mr-2">Filter</div>
+        <div class="btn btn-outline-danger mr-2">Clear</div>
+    </div>
+
+
+  </div>
+
+  <!-- Scalers -->
+  <div class="row">  
+
+  </div>
+
+  <!-- Datatable -->
+  <div class="">
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum quod fuga quae exercitationem iusto corrupti nesciunt fugiat, at, voluptatibus laborum quaerat nisi amet veritatis possimus voluptatem natus repudiandae ad. Alias cumque voluptatibus, cupiditate enim corporis veniam, at blanditiis corrupti itaque labore dignissimos animi possimus odio repellat perspiciatis laborum placeat magni. Deleniti dolorem veniam ratione fugit eveniet doloribus consequatur, sapiente modi non facilis ducimus voluptatibus atque quas voluptatum ex dolor consequuntur est quod. Nulla laboriosam harum facere voluptate expedita quidem cum dolorum voluptates blanditiis, saepe qui porro ut eveniet asperiores, inventore, suscipit error ad. Nobis dolor maxime voluptatum explicabo inventore. Quod, quos? Alias cumque impedit aliquid repellendus deleniti, assumenda excepturi repudiandae nisi unde, magni laboriosam aliquam! Culpa iure laborum eveniet, magni accusamus nulla ullam, error voluptatum vel rerum dolorem itaque delectus provident, accusantium labore quibusdam. Inventore excepturi labore voluptatum temporibus nobis? Amet suscipit fugit reprehenderit accusamus nostrum aperiam itaque tempore odit aspernatur nihil esse dolorum neque ut alias, exercitationem voluptate quis beatae cumque, dolor praesentium deserunt eaque iusto. Asperiores minus similique alias libero vitae quia amet fugit, porro possimus itaque aspernatur dignissimos illo obcaecati voluptatem rerum pariatur? Iste tempora earum, deleniti adipisci est aspernatur quo debitis blanditiis sapiente nihil voluptas vero repellat enim, quae, magnam provident corrupti totam numquam fugit quibusdam rem dolor libero consectetur. Fugit consequatur minus quod corrupti, deleniti nostrum facilis recusandae assumenda doloremque necessitatibus quis magnam non expedita!
+  </div>
+
+  <!-- Paging -->
+   <div class="row">    
+        <div class="col-lg-6 ">
+        
+            <div class="btn-group">
+                <button type="button" class="btn btn-default" disabled>|<</button>
+                <button type="button" class="btn btn-default"  disabled><</button>
+                <button type="button" class="btn btn-default"  disabled>1</button>
+                <button type="button" class="btn btn-default" >2</button>
+                <button type="button" class="btn btn-default" >3</button>
+                <button type="button" class="btn btn-default" >4</button>
+                <button type="button" class="btn btn-default" >></button>
+                <button type="button" class="btn btn-default" >>|</button>
+            </div>
+        </div>
+
+        <div class="col-lg-6 text-right">
+            <select class="form-control" style="width: 60px; display: inline-block;">
+                <option selected>10</option>
+                <option>25</option>
+                <option>50</option>
+                <option>100</option>
+            </select>
+            &nbsp;&nbsp;&nbsp;
+            Showing 1 - 10 of 100
+            
+    </div>
+
+   </div>
+  
