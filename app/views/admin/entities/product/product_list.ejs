@@ -54,7 +54,6 @@
 
   <!-- Datatable -->
   <div class="">
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum quod fuga quae exercitationem iusto corrupti nesciunt fugiat, at, voluptatibus laborum quaerat nisi amet veritatis possimus voluptatem natus repudiandae ad. Alias cumque voluptatibus, cupiditate enim corporis veniam, at blanditiis corrupti itaque labore dignissimos animi possimus odio repellat perspiciatis laborum placeat magni. Deleniti dolorem veniam ratione fugit eveniet doloribus consequatur, sapiente modi non facilis ducimus voluptatibus atque quas voluptatum ex dolor consequuntur est quod. Nulla laboriosam harum facere voluptate expedita quidem cum dolorum voluptates blanditiis, saepe qui porro ut eveniet asperiores, inventore, suscipit error ad. Nobis dolor maxime voluptatum explicabo inventore. Quod, quos? Alias cumque impedit aliquid repellendus deleniti, assumenda excepturi repudiandae nisi unde, magni laboriosam aliquam! Culpa iure laborum eveniet, magni accusamus nulla ullam, error voluptatum vel rerum dolorem itaque delectus provident, accusantium labore quibusdam. Inventore excepturi labore voluptatum temporibus nobis? Amet suscipit fugit reprehenderit accusamus nostrum aperiam itaque tempore odit aspernatur nihil esse dolorum neque ut alias, exercitationem voluptate quis beatae cumque, dolor praesentium deserunt eaque iusto. Asperiores minus similique alias libero vitae quia amet fugit, porro possimus itaque aspernatur dignissimos illo obcaecati voluptatem rerum pariatur? Iste tempora earum, deleniti adipisci est aspernatur quo debitis blanditiis sapiente nihil voluptas vero repellat enim, quae, magnam provident corrupti totam numquam fugit quibusdam rem dolor libero consectetur. Fugit consequatur minus quod corrupti, deleniti nostrum facilis recusandae assumenda doloremque necessitatibus quis magnam non expedita!
   </div>
 
   <!-- Paging -->
@@ -62,27 +61,26 @@
         <div class="col-lg-6 ">
         
             <div class="btn-group">
-                <button type="button" class="btn btn-default" disabled>|<</button>
-                <button type="button" class="btn btn-default"  disabled><</button>
-                <button type="button" class="btn btn-default"  disabled>1</button>
-                <button type="button" class="btn btn-default" >2</button>
-                <button type="button" class="btn btn-default" >3</button>
-                <button type="button" class="btn btn-default" >4</button>
-                <button type="button" class="btn btn-default" >></button>
-                <button type="button" class="btn btn-default" >>|</button>
-            </div>
-        </div>
+              <div class="btn btn-sm btn-primary" >Goto</div>
+               <% data.paging.buttons.forEach((btn) => { %>
+                <div class="btn btn-sm  <% if(btn.current) {%> btn-primary  <% } else { %> btn-default <% } %>  " <% if(!btn.page) {%> disabled  <% } %> ><%= btn.title %></div>
+                <% }); %> 
+              </div>
 
-        <div class="col-lg-6 text-right">
-            <select class="form-control" style="width: 60px; display: inline-block;">
-                <option selected>10</option>
-                <option>25</option>
-                <option>50</option>
-                <option>100</option>
-            </select>
-            &nbsp;&nbsp;&nbsp;
-            Showing 1 - 10 of 100
+            </div>
             
+            <div class="col-lg-6 text-right pt-2 pt-lg-0">
+              
+              
+              Rows <%= data.paging.first_index %> - <%= data.paging.last_index %> of <%= data.paging.total_rows %> 
+              ( Page <%= data.paging.current_page %> of <%= data.paging.total_pages %> )
+              &nbsp;&nbsp;&nbsp;
+            <select class="form-control" style="width: 60px; display: inline-block; height: 30px;">
+              <option <% if(data.paging.page_size == 10){ %> selected <%} %> >10</option>
+              <option <% if(data.paging.page_size == 25){ %> selected <%} %> >25</option>
+              <option <% if(data.paging.page_size == 50){ %> selected <%} %> >50</option>
+              <option <% if(data.paging.page_size == 100){ %> selected <%} %> >100</option>
+          </select>
     </div>
 
    </div>
